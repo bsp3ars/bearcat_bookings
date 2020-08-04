@@ -1,10 +1,11 @@
 class RoomsController < ApplicationController
   before_action :set_room, only: [:show, :edit, :update, :destroy]
+  before_action :require_building_id
 
   # GET /rooms
   # GET /rooms.json
   def index
-    @rooms = Room.all
+    @rooms = Room.where("building_id = #{session[:building_id]}")
   end
 
   # GET /rooms/1
@@ -61,6 +62,11 @@ class RoomsController < ApplicationController
     end
   end
 
+  def choose_room
+    session[:room_id] = params[:id]
+    redirect_to reservations_path
+  end
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_room
@@ -70,5 +76,11 @@ class RoomsController < ApplicationController
     # Only allow a list of trusted parameters through.
     def room_params
       params.require(:room).permit(:building_id, :name)
+    end
+
+    def require_building_id
+      if session[:building_id] == nil 
+        redirect_to buildings_path
+      end
     end
 end
