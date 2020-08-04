@@ -1,10 +1,11 @@
 class ReservationsController < ApplicationController
   before_action :set_reservation, only: [:show, :edit, :update, :destroy]
+  before_action :require_building_id_and_room_id
 
   # GET /reservations
   # GET /reservations.json
   def index
-    @reservations = Reservation.all
+    @reservations = Reservation.where("room_id = #{session[:room_id]}")
   end
 
   # GET /reservations/1
@@ -70,5 +71,11 @@ class ReservationsController < ApplicationController
     # Only allow a list of trusted parameters through.
     def reservation_params
       params.require(:reservation).permit(:room_id, :reservation_time, :reservation_code)
+    end
+
+    def require_building_id_and_room_id
+      if session[:building_id].nil? || session[:room_id].nil?
+        redirect_to buildings_path
+      end
     end
 end
