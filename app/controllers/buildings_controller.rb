@@ -61,6 +61,11 @@ class BuildingsController < ApplicationController
     end
   end
 
+  def choose_building
+    session[:building_id] = params[:id]
+    redirect_to rooms_path
+  end
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_building
